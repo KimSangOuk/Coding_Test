@@ -46,5 +46,5 @@ for k in distance[1:]:
   if k!=INF:
     count+=1
     max_time=max(max_time,k)
-# 시작 노드는 제외해야 하므로 count-1을 출력
+# 시작 노드는 제외해야 하므로 
 print(count-1,max_time)
