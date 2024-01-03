@@ -1,3 +1,61 @@
+# 풀이시간 30분/60분 시간제한 2초 메모리제한 256MB
+# 2회차 정답
+# 단순히 조합이나 벽을 설치하는 모든 경우를 고려하여서 벽을 설치한 이후 체크해보고 다시 벽을 지우고 다른 케이스를 보는 식으로 전체 함수가 움직이면 되는 식이다. 케이스를 확인할 때에는 선생님의 위치만 따로 체크해서 감시를 하는데 이 때, 깊이 탐색인 DFS로 들어갔다가 학생을 찾을 때만을 고려하여 학생을 찾지 못하는 경우, 정답을 YES로 출력하면 되는 간단한 문제이다.
+
+n=int(input())
+
+board=[]
+teacher=[]
+for i in range(n):
+  arr=list(map(int,input().split()))
+  for j in range(n):
+    if arr[j]=='T':
+      teacher.append((i,j))
+
+def watch(t,dir):
+  y,x=t
+  if y<0 or y>=n or x<0 or x>=n or board[y][x]=='O':
+    return False
+  if board[y][x]=='S':
+    return True
+  if board[y][x]=='X':
+    if dir==0:
+      watch((y-1,x),0)
+    elif dir==1:
+      watch((y,x+1),1)
+    elif dir==2:
+      watch((y+1,x),2)
+    elif dir==3:
+      watch((y,x-1),3)
+    return False
+
+def dfs(count):
+  if count==3:
+    all=True
+    for t in teacher:
+      for i in range(4)
+      if watch(t,i):
+        all=False
+        break
+    if all:
+      return True
+  else:
+    for i in range(n):
+      for j in range(n):
+        if board[i][j]=='X':
+          count+=1
+          board[i][j]='O'
+          dfs(count)
+          count-=1
+          board[i][j]='X'
+  return False
+
+if dfs(0):
+  print('YES')
+else:
+  print('NO')
+
+
 # 풀이시간 60분/60분 시간제한 2초 메모리제한 256MB
 # 1회차 정답 - 하지만 코드를 짜면서 더 단축시키고 배울 부분이 있다고 생각해서 한번 더 풀어볼 것
 # 내 코드가 더 짧고 효율적이긴 함. 하지만 다른 부분에서 효율적으로 작성할 수 있었음.
