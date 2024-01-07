@@ -27,6 +27,4 @@ while True:
     while light!=heavy and people[light]+people[heavy]>limit:
         heavy-=1
 
-
-
 return answer

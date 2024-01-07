@@ -1,3 +1,26 @@
+# 풀이시간 20분 시간제한 2초 메모리제한 512MB
+# 2회차 풀이
+# 단순하게 앞에서부터 생각했을 경우, 특정 날의 최대 수익은 그 전날의 진료가 끝나고 나서의 최대 수입에 특정 날의 수입을 더한 값이거나 그 전까지의 수입이다. 그렇기 때문에 뒤에서부터 누적시켜서 푼다면 쉽게 풀리는 문제이다.
+
+n=int(input())
+
+array=[]
+for _ in range(n):
+  t,p=map(int,input().split())
+  array.append((t,p))
+
+dp=[0]*(n+1)
+max_value=0
+for i in range(n-1,-1,-1):
+  if i+array[i][0]<n+1:
+    dp[i]=max(max_value,dp[i+array[i][0]]+array[i][1])
+    max_value=dp[i]
+  else:
+    dp[i]=max_value
+
+print(max_value)
+
+
 # 풀이시간 35분/30분 시간제한 2초 메모리제한 512MB
 # 1회차 정답 - 풀이시간 초과, 자동완성 폐해, 더 간단한 아이디어
 # 풀고 있는데 자동완성이 답을 알려줘서 개빡쳤다. 문제 자체는 일정 기간까지의 정답에 비용을 더 하면서 어떤 값이 최대값이 되는지 비교하면 되는 문제이다.
@@ -5,52 +28,48 @@
 # 단순히 역으로 생각하는 것을 해보려고 하지 않았다. 그렇게 된 이유는 현재의 값만을 계속해서 기준으로 생각하였기 때문에 현재의 값을 구하기 위해서는 앞에서의 값에 집중하여 누적된 것을 찾아야만 했다. 하지만 단순히 하나씩 구해간다는 생각으로 즉, 하나의 날짜에 여러개가 끝나는 것이 기준이 아닌 하나의 날짜에 하나가 시작된다는 것을 목표로 삼았다면 더 간단한 풀이에 접근할 수 있었지 않았나 싶다.
 # 역으로도 생각해보려고 했으나, 뒤에서 최댓값이 구해질 수 있나? 이생각이 들어 안했던 것 같다. 하지만 결국 삼각형 문제처럼 총체적인 이익을 구하는 문제이기 때문에 앞으로 누적하든 뒤로 누적하든 상관이 없다는 것을 보지 못했다. 이게 핵심적인 문제인 것 같다. 상식적인 관념에 갇혀서 비용이 전날부터 역으로 쌓일 수가 있나? 이런 고정관념을 깨는 문제였다.
 
-# 2회차 풀이
-
-
-
 # 1회차 풀이
 # 나 같은 경우는 앞에서부터 생각하였기에 현재 시점에서 끝나는 상담의 비용을 더했을 때의 값의 최대치를 구한 후 굳이 더하지 않은 경우의 최대치를 비교해서 답을 도출하는 아이디어를 썼다.
 # 답안지의 경우에는 이를 더 쉽게 표현하기 위해 어떤 상담의 문제에서 주어진 값이 시작일이기 때문에 시작일을 기준으로 현재의 날짜의 시작된 상담이 끝나는 날 이후의 최대치와 현재의 상담을 더한 값이 더 큰지를 비교하여 답안을 작성하였다.
 # 상담이 기간 내에 끝나는지가 첫번째 조건이고 만약 기간 내에 끝난다면, 그 기간 이후에 최대값+지금 상담의 비용, 현재까지의 최대값중 큰 값을 비교하여 오늘의 최댓값으로 넣는다. 그리고 만약 기간 내에 끝나지 않는다면, 이전 값을 넣으면 된다.
-n=int(input())
+# n=int(input())
 
-d=[0]*(n+1)
+# d=[0]*(n+1)
 
-array=[]
-for i in range(1,n+1):
-  take,cost=map(int,input().split())
-  array.append((i,i+take-1,cost))
+# array=[]
+# for i in range(1,n+1):
+#   take,cost=map(int,input().split())
+#   array.append((i,i+take-1,cost))
 
-for i in range(1,n+1):
-  for start,end,cost in array:
-    if end==i:
-      d[i]=max(d[i],d[start-1]+cost)
-  d[i]=max(d[i],d[i-1])
+# for i in range(1,n+1):
+#   for start,end,cost in array:
+#     if end==i:
+#       d[i]=max(d[i],d[start-1]+cost)
+#   d[i]=max(d[i],d[i-1])
 
-print(d[n])
+# print(d[n])
 
-# 답안 예시
-n=int(input()) # 전체 상담 개수
-dp=[0]*(n+1) # 다이나믹 프로그래밍을 위한 1차원 dp 테이블 초기화
-t=[] # 각 상담을 완료하는 데 걸리는 시간
-p=[] # 각 상담을 완료했을 때 받을 수 있는 금액
-max_value=0
+# # 답안 예시
+# n=int(input()) # 전체 상담 개수
+# dp=[0]*(n+1) # 다이나믹 프로그래밍을 위한 1차원 dp 테이블 초기화
+# t=[] # 각 상담을 완료하는 데 걸리는 시간
+# p=[] # 각 상담을 완료했을 때 받을 수 있는 금액
+# max_value=0
 
-for _ in range(n):
-  x,y=map(int,input().split())
-  t.append(x)
-  p.append(y)
+# for _ in range(n):
+#   x,y=map(int,input().split())
+#   t.append(x)
+#   p.append(y)
 
-# 리스트를 뒤에서 부터 확인
-for i in range(n-1,-1,-1):
-  time=t[i]+i
-  # 상담이 기간 안에 끝나는 경우
-  if time<=n:
-    dp[i]=max(max_value,dp[time]+p[i])
-    max_value=dp[i]
-  # 상담이 기간을 벗어나는 경우
-  else:
-    dp[i]=max_value
+# # 리스트를 뒤에서 부터 확인
+# for i in range(n-1,-1,-1):
+#   time=t[i]+i
+#   # 상담이 기간 안에 끝나는 경우
+#   if time<=n:
+#     dp[i]=max(max_value,dp[time]+p[i])
+#     max_value=dp[i]
+#   # 상담이 기간을 벗어나는 경우
+#   else:
+#     dp[i]=max_value
 
-print(max_value)
+# print(max_value)
