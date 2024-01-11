@@ -1,3 +1,59 @@
+# 풀이시간 20분/40분 시간제한 1초 메모리제한 128MB
+# 2회차 풀이
+# 크루스칼 알고리즘에서 간선을 구할 때, 각 좌표를 전부 비교해서 구해야하기 때문에 메모리와 시간이 초과하는 문제이다. n이 100,000이기 때문에 각자 비교한다면 약 n^2이 나오기 때문이다. 그렇기 때문에 다른 방법을 찾아하는데, 이 때, 주어진 조건은 각 좌표를 비교한 것중 최소값만 필요로 하므로 각 좌표를 나열했을 때, 거리가 최솟값의 후보군이 될 수 있기 때문에, 각 좌표를 따로 받아서 정렬한다음 가장 가까운 두점의 거리만 구하면 된다. 이렇게 된다면 연산의 횟수가 정렬의 횟수를 넘지 않는다. 그렇기 때문에 충분히 가능하다.
+
+def find_parent(parent,x):
+  if parent[x]!=x:
+    parent[x]=find_parent(parent,parent[x])
+  return parent[x]
+
+def union_parent(parent,a,b):
+  a=find_parent(parent,a)
+  b=find_parent(parent,b)
+  if a<b:
+    parent[b]=a
+  else:
+    parent[a]=b
+
+n=int(input())
+parent=[0]*(n+1)
+
+for i in range(1,n+1):
+  parent[i]=i
+
+array_x=[]
+array_y=[]
+array_z=[]
+for i in range(1,n+1):
+  x,y,z=map(int,input().split())
+  array_x.append((x,i))
+  array_y.append((y,i))
+  array_z.append((z,i))
+
+array_x.sort()
+array_y.sort()
+array_z.sort()
+
+edges=[]
+for i in range(0,n-1):
+  cost_x=array_x[i+1][0]-array_x[i][0]
+  cost_y=array_y[i+1][0]-array_y[i][0]
+  cost_z=array_z[i+1][0]-array_z[i][0]
+  edges.append((cost_x,array_x[i][1],array_x[i+1][1]))
+  edges.append((cost_y,array_y[i][1],array_y[i+1][1]))
+  edges.append((cost_z,array_z[i][1],array_z[i+1][1]))
+
+edges.sort()
+result=0
+for edge in edges:
+  cost,a,b=edge
+  if find_parent(parent,a)!=find_parent(parent,b):
+    union_parent(parent,a,b)
+    result+=cost
+
+print(result)
+
+
 # 풀이시간 over/40분 시간제한 1초 메모리제한 128MB
 # 1회차 오답 - 풀이방식에 접근하지 못함
 # 문제를 보았을 때, 행성간의 간선을 구해서 행성이 모두 연결되는 최소 거리를 구하는 최소 스패닝 트리의 알고리즘으로 풀 수 있다는 것을 알 수 있다. 행성의 개수가 100,000이기 때문에 최소 스패닝 트리의 ElogE를 적용시켜야 하는데, 간선의 개수가 원래 구하는 방법으로 구한다면 모든 행성을 각자 서로 연결시켜야 하므로 100,000*100,000/2가 나와서 시간복잡도 면에서나 메모리제한 면에서 불가능 하다는 것을 알 수 있다.
@@ -21,11 +77,6 @@
 
 # 즉, 너무 복잡하게 생각했었는데, min이 없다면 1차원적인 선에서, 크루스칼 알고리즘을 구한다고 치면 되는 거다. 그때, 간선을 구하는데, 건너 뛴 점을 생각할 필요가 없다는 뜻.
 # 이러한 논리를 알고 있다면 역순으로 아이디어의 생각이 가능하다. 즉, 각 좌표 사이의 차이 중에서 가장 작은 값? 근데, 각 좌표에서는 모든 점을 비교할 필요가 없이 가까이에 있는 것만 생각하면 되잖아? -> 그러면 각 영역별로 정렬해서 인접한 간선만 구해서 그 중에서만 처리하자.
-
-# 2회차 풀이
-
-
-
 
 # 1회차 풀이
 import sys
