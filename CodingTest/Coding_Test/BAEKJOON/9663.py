@@ -1,27 +1,36 @@
-# 풀이시간 /60분 시간제한 10초 메모리제한 128MB
+# 풀이시간 40분/60분 시간제한 10초 메모리제한 128MB
 # 2회차 풀이
+# 하나의 행씩 퀸을 두어가며 그 경우가 서로 공격할 수 없는지 따져가는 문제이다. dfs로 모든 경우를 탐색하는 완전탐색 문제라고 할 수 있다.
 
+def queen_possible(now):
+  num=len(now)
 
+  last=now[-1]
+  
+  for i in range(0,num-1):
+    if abs(last-now[i])==abs((num-1)-i):
+      return False
+  return True
 
+def dfs(deep):
+  global count
+  if deep!=0 and not queen_possible(now):
+    return False
+  if deep==n:
+    if queen_possible(now):
+      count+=1
+  else:
+    for i in range(0,n):
+      if i not in now:
+        now.append(i)
+        dfs(deep+1)
+        now.pop()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+count=0
+now=[]
+n=int(input())
+dfs(0)
+print(count)
 
 # 풀이시간 120분/60분 시간제한 10초 메모리제한 128MB
 # 1회차 정답 but 풀이시간 너무 오래 걸림
@@ -33,31 +42,31 @@
 # 두번째는, 순열을 구현하는 방법과 이것에 조건을 붙이는 방법에 대해 어느 정도 배웠다. 좋은 경험이 될 것 같다.
 # 다시 한번 풀어 보기로 하였다.
 
-n=int(input())
-count=0
+# n=int(input())
+# count=0
 
-def permu(arr,n):
-  global count
-  if len(arr)==n:
-    # print(arr)
-    # result=check(arr,n)
-    # if result:
-    count+=1
-    return
-  for i in range(n):
-    if i not in arr:
-      arr.append(i)
-      if check(arr,len(arr)):
-        permu(arr,n)
-      arr.remove(i)
+# def permu(arr,n):
+#   global count
+#   if len(arr)==n:
+#     # print(arr)
+#     # result=check(arr,n)
+#     # if result:
+#     count+=1
+#     return
+#   for i in range(n):
+#     if i not in arr:
+#       arr.append(i)
+#       if check(arr,len(arr)):
+#         permu(arr,n)
+#       arr.remove(i)
       
 
-def check(arr,n):
-  new=arr[-1]
-  for i in range(n-1):
-    if abs(arr[i]-new)==abs(i-(n-1)):
-      return False
-  return True
+# def check(arr,n):
+#   new=arr[-1]
+#   for i in range(n-1):
+#     if abs(arr[i]-new)==abs(i-(n-1)):
+#       return False
+#   return True
 
-permu([],n)
-print(count)
+# permu([],n)
+# print(count)

@@ -1,11 +1,36 @@
-# 풀이 시간 - 1시간 30분/30분 시간제한 1초 메모리제한 128MB
-# 1회차 오답 - 예외케이스를 찾지못함
-# 먼저 s의 길이가 1000이하인거를 알고 O(N^2)을 생각하게 되었는데 길이를 1에서부터 중간정도까지 단위로 나누어서 돌려야된다고 생각하니 그 안에 끊은 단위를 돌리면서 갯수를 파악해야된다고 생각하니 이중 포문이 딱맞아떨어졌다. 여기까지는 괜찮음.
+# 풀이시간 30분 시간제한 1초 메모리제한 128MB
+# 3회차 정답
+# 입력된 문자열을 압에서부터 끊는 단위별로 탐색하여 압축시켜가는 전체 탐색하는 브루트포스 알고리즘 유형이다. 지금 같은 경우, 앞에서부터 전부 끊어서 풀었지만 prev를 두고 앞에 시작점을 다르게 한다면 더 코드를 간단화 할 수 있기도 하고 연습도 하는 겸 다시 풀어보기로 하였다.
 
-# 3회차 풀이
+def solution(s):
+  answer = len(s)
 
+  length=len(s)
 
+  for unit in range(1,length//2+1):
+    compress_s=""
+    count=1
+    for i in range(0,length-1,unit):
+      if s[i:i+unit]==s[i+unit:i+2*unit]:
+        count+=1
+      else:
+        compress_s+=str(count)+s[i:i+unit] if count>1 else s[i:i+unit]
+        count=1
+    if s[i:i+unit]==s[i+unit:i+2*unit]:
+      compress_s+=str(count)+s[i:i+unit]
+    else:
+      compress_s+=s[i+unit:i+2*unit]
+    answer=min(answer,len(compress_s))
+  
+  return answer
 
+print(solution("aaaaa"))
+print(solution("aabbaccc"))
+print(solution("ababcdcdababcdcd"))
+print(solution("abcabcdede"))
+print(solution("abcabcabcabcdededededede"))
+print(solution("xababcdcdababcdcd"))
+print(solution("a"))
 
 
 
@@ -39,32 +64,36 @@
 # 마지막 세번째는, 답에 관련된 부분이다. 숫자의 길이가 문장으로 따졌을 때, 한개 이상일 수 있다는 점을 고려해야된다는 것이다. 이부분은 종종 등장할 수 있지만 무조건 한글자라고 문자열 처리할 때 하는 관념이 있다고 생각해서 확실히 하기 위해 적어놓았다.
 # 밑에 풀이는 그래도 답을 출력하고 있다. 저번보다는 성장했다는 것을 알 수 있다.
 
-def solution(s):
-  s_len=len(s)
-  answer=s_len
+# def solution(s):
+#   s_len=len(s)
+#   answer=s_len
 
-  for i in range(1,s_len//2+1):
-    cut_line=i
+#   for i in range(1,s_len//2+1):
+#     cut_line=i
 
-    whole_len=0
+#     whole_len=0
 
-    same=1
-    for j in range(0,s_len-cut_line,cut_line):
-      if s[j:j+cut_line]==s[j+cut_line:j+2*cut_line]:
-        same+=1
-      else:
-        if same!=1:
-          whole_len+=cut_line+len(str(same))
-        else:
-          whole_len+=cut_line
-        same=1
-    if same!=1:
-      whole_len+=cut_line+len(str(same))
-    else:
-      whole_len+=s_len-(j+cut_line)
-    answer=min(whole_len,answer)
+#     same=1
+#     for j in range(0,s_len-cut_line,cut_line):
+#       if s[j:j+cut_line]==s[j+cut_line:j+2*cut_line]:
+#         same+=1
+#       else:
+#         if same!=1:
+#           whole_len+=cut_line+len(str(same))
+#         else:
+#           whole_len+=cut_line
+#         same=1
+#     if same!=1:
+#       whole_len+=cut_line+len(str(same))
+#     else:
+#       whole_len+=s_len-(j+cut_line)
+#     answer=min(whole_len,answer)
   
-  return answer
+#   return answer
+
+# 풀이 시간 - 1시간 30분/30분 시간제한 1초 메모리제한 128MB
+# 1회차 오답 - 예외케이스를 찾지못함
+# 먼저 s의 길이가 1000이하인거를 알고 O(N^2)을 생각하게 되었는데 길이를 1에서부터 중간정도까지 단위로 나누어서 돌려야된다고 생각하니 그 안에 끊은 단위를 돌리면서 갯수를 파악해야된다고 생각하니 이중 포문이 딱맞아떨어졌다. 여기까지는 괜찮음.
 
 # # 1회차 풀이
 # # 생각한대로 이중 포문으로 돌린다음 이전것이 생긴다는 괜찮았음. 여기서 두가지로 나누어서 생각하게 됨. 그냥 글자 수만 구하는 방법이랑 전체적인 답을 구한다음에 그 글자수를 따로 세는 방법이랑 나누어졌는데 첫번재 방법은 애초에 엄청나게 많이 틀림. 여기까지 30분을 써버림. 그래서 다시 구현하니까 또 30분 정도 걸림. 이유는 찾지 못함. 다 맞춰보니 틀린 경우가 한가지 존재하게 됨. 글자수가 하나일 경우임. 그래서 강제적으로 맞춰버림. 이건 그냥 틀린거나 마찬가지라고 봄.
@@ -104,13 +133,13 @@ def solution(s):
 
 # 결국 밑에 처럼 돌려가면서 찾는 버릇을 없애야 함. 이게 시간도 다 잡아먹으면서 찾기도 쉽지 않음. 애초에 확실히 코드를 짤 계획을 세우고 다 짠다음에 머리로 돌려보고 그래도 안되면 돌려야됨.
 
-print(solution("aaaaa"))
-print(solution("aabbaccc"))
-print(solution("ababcdcdababcdcd"))
-print(solution("abcabcdede"))
-print(solution("abcabcabcabcdededededede"))
-print(solution("xababcdcdababcdcd"))
-print(solution("a"))
+# print(solution("aaaaa"))
+# print(solution("aabbaccc"))
+# print(solution("ababcdcdababcdcd"))
+# print(solution("abcabcdede"))
+# print(solution("abcabcabcabcdededededede"))
+# print(solution("xababcdcdababcdcd"))
+# print(solution("a"))
 
 # # 답안지
 # def solution(s):

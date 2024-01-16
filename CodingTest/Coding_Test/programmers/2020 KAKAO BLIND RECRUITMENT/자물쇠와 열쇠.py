@@ -1,4 +1,4 @@
-# 이것이 취업을 위한 코딩테스트다 part03 '10. 문자열 압축'과 동일
+# 이것이 취업을 위한 코딩테스트다 part03 '10. 자물쇠와 열쇠'와 동일
 
 def check_all(lock,lock_size,key_size):
   for i in range(key_size-1,key_size+lock_size-1):

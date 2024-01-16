@@ -1,35 +1,54 @@
-# 풀이 시간 - 1시간 30분/40분 시간제한 1초 메모리제한 128MB
-# 1회차 오답 - 풀이시간 초과
-# n,m의 판 크기가 20을 넘지 않는것을 보고 엄청 여러번 for문을 중첩시켜도 되겠구나 생각이 들었음. 그리고 마침. 하나씩 맞춰보는 알고리즘을 써야할 것 같아서 완전탐색이라는 것도 알게됨.
-# 결국 풀어냈지만 시간이 너무 오래걸렸고 더 배울 아이디어가 있음.
-
+# 풀이시간 25분/40분 시간제한 1초 메모리제한 128MB
 # 3회차 풀이
+# 자물쇠의 크기를 확장해서 열쇠의 회전의 경우를 모두 고려해서 끼워맞춘 다음 전부 자물쇠가 1로 만들어지는 순간이 있다면 True 없다면 False를 출력하는 문제이다. 모든 경우를 고려하는 완전 탐색 문제라고 할 수 있다.
+# 이 때, 핵심 내가 놓쳤던 아이디어들은 자물쇠 크기의 여유로운 확장과 인덱스를 고려한 확장 / 그리고 키를 끼우고 뺄때 새롭게 만들어서 메모리 공간을 절약하는 +, - / 2차원 배열의 회전 시에는 대칭을 이용하는 법 이렇게 3가지가 있다.
 
+def rotate_key(key):
+  new_board=[[0]*len(key) for _ in range(len(key))]
+  for i in range(len(key)):
+    for j in range(len(key)):
+      new_board[j][len(key)-1-i]=key[i][j]
 
+  return new_board
 
+def check(lock,key,start):
+  n=len(lock)//3
+  start_x,start_y=start
+  answer=True
+  for i in range(start_x,start_x+len(key)):
+    for j in range(start_y,start_y+len(key)):
+      lock[i][j]+=key[i-start_x][j-start_y]
 
+  for i in range(n,2*n):
+    for j in range(n,2*n):
+      if lock[i][j]!=1:
+        answer=False
 
+  for i in range(start_x,start_x+len(key)):
+    for j in range(start_y,start_y+len(key)):
+      lock[i][j]-=key[i-start_x][j-start_y]
 
+  return answer
 
+def solution(key, lock):
+  answer = False
 
+  n=len(lock)
+  m=len(key)
+  expand_lock=[[0]*(3*n) for _ in range(3*n)]
 
+  for i in range(n,2*n):
+    for j in range(n,2*n):
+      expand_lock[i][j]=lock[i-n][j-n]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  for i in range(4):
+    key=rotate_key(key)
+    for i in range(2*n):
+      for j in range(2*n):
+        if check(expand_lock,key,(i,j)):
+          return True
+          
+  return answer
 
 
 # 2회차 풀이
@@ -38,57 +57,63 @@
 # 즉, 크기를 보았을 때, 시간복잡도에 영향을 끼치지 않을 정도면 단순하게 확장하는 것이 인덱스를 다루는데 더 쉬움.
 # 내가 약간, 모든 것을 최소로 다루어야된다고 생각하는 경향이 있는데, 이게 잘못된거 만은 아니지만, 시간복잡도에 영향을 끼치지 않을 때만 그래서 위의 방법을 써야함.
 
-def check_all(lock,lock_size,key_size):
-  for i in range(key_size-1,key_size+lock_size-1):
-    for j in range(key_size-1,key_size+lock_size-1):
-      if lock[i][j]!=1:
-        return False
+# def check_all(lock,lock_size,key_size):
+#   for i in range(key_size-1,key_size+lock_size-1):
+#     for j in range(key_size-1,key_size+lock_size-1):
+#       if lock[i][j]!=1:
+#         return False
 
-  return True
+#   return True
 
-def rotate_key(key):
-  key_size=len(key)
-  new_key=[[0]*key_size for i in range(key_size)]
+# def rotate_key(key):
+#   key_size=len(key)
+#   new_key=[[0]*key_size for i in range(key_size)]
 
-  for i in range(key_size):
-    for j in range(key_size):
-      new_key[j][key_size-1-i]=key[i][j]
-  return new_key
+#   for i in range(key_size):
+#     for j in range(key_size):
+#       new_key[j][key_size-1-i]=key[i][j]
+#   return new_key
 
-def solution(key, lock):
-  answer = True
+# def solution(key, lock):
+#   answer = True
 
-  key_size=len(key)
-  lock_size=len(lock)
-  new_lock=[[0]*(lock_size+(key_size)*2-2) for i in range(lock_size+key_size*2-2)]
+#   key_size=len(key)
+#   lock_size=len(lock)
+#   new_lock=[[0]*(lock_size+(key_size)*2-2) for i in range(lock_size+key_size*2-2)]
 
-  for i in range(key_size-1,key_size-1+lock_size):
-    for j in range(key_size-1,key_size-1+lock_size):
-      new_lock[i][j]=lock[i-key_size+1][j-key_size+1]
+#   for i in range(key_size-1,key_size-1+lock_size):
+#     for j in range(key_size-1,key_size-1+lock_size):
+#       new_lock[i][j]=lock[i-key_size+1][j-key_size+1]
 
-  for _ in range(4):
-    key=rotate_key(key)
+#   for _ in range(4):
+#     key=rotate_key(key)
 
-    for j in range(0,key_size+lock_size-1):
-      for k in range(0,key_size+lock_size-1):
-        for a in range(key_size):
-          for b in range(key_size):
-            new_lock[j+a][k+b]+=key[a][b]
+#     for j in range(0,key_size+lock_size-1):
+#       for k in range(0,key_size+lock_size-1):
+#         for a in range(key_size):
+#           for b in range(key_size):
+#             new_lock[j+a][k+b]+=key[a][b]
 
-        # for c in range(len(new_lock)):
-        #   for d in range(len(new_lock)):
-        #     print(new_lock[c][d],end=" ")
-        #   print()
+#         # for c in range(len(new_lock)):
+#         #   for d in range(len(new_lock)):
+#         #     print(new_lock[c][d],end=" ")
+#         #   print()
           
-        if check_all(new_lock,lock_size,key_size):
-          return True
+#         if check_all(new_lock,lock_size,key_size):
+#           return True
         
-        for a in range(key_size):
-          for b in range(key_size):
-            new_lock[j+a][k+b]-=key[a][b]
+#         for a in range(key_size):
+#           for b in range(key_size):
+#             new_lock[j+a][k+b]-=key[a][b]
 
   
-  return False
+#   return False
+
+
+# 풀이 시간 - 1시간 30분/40분 시간제한 1초 메모리제한 128MB
+# 1회차 오답 - 풀이시간 초과
+# n,m의 판 크기가 20을 넘지 않는것을 보고 엄청 여러번 for문을 중첩시켜도 되겠구나 생각이 들었음. 그리고 마침. 하나씩 맞춰보는 알고리즘을 써야할 것 같아서 완전탐색이라는 것도 알게됨.
+# 결국 풀어냈지만 시간이 너무 오래걸렸고 더 배울 아이디어가 있음.
 
 # # 1회차 풀이
 # # 회전까지도 괜찮게 생각했고 4번 돌리는 것과 판에서 이동시키는 것까지도 괜찮았으나 판위에서 열쇠를 이동시키고 그 이동한 자국을 표현하는데 애먹음. 여기서 막혀서 시간 초과가 나옴. 맨 처음에는 확장한 판에서 열쇠랑 비교대조를 하려고 하였으나 가운데만을 또 측정하지 않아서 오답이 나왔는지 않됨. 그래서 열쇠를 판에 완전히 끼어넣어 표현한 다음 그 판의 가운데가 맞는 확인하고자 함. 그러자 이제 열쇠를 더해서 끼어넣는 아이디어가 생각남. 하지만 끼워넣은 다음에 판을 리셋을 시켜야하는 문제에 다시 직면함. 이 문제를 나는 판을 새로 만들어서 구했지만 그냥 다시 빼는 방법도 존재했었고 이게 더 쉬웠음.
