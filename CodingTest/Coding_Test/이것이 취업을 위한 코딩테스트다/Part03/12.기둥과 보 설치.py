@@ -1,37 +1,53 @@
-# 풀이 시간 - 1시간 30분/50분 시간제한 5초 메모리제한 128MB
-# 1회차 오답 - 풀이시간 초과, 알고리즘 복잡(정답은 맞음)
-# 내가 짠 코드에서 줄일 수 있는 부분 - 애초에 block을 빼고 넣었으면 각 설치 함수의 제거하는 블록을 있는지 확인하는 부분을 없애고 제거 확인 함수에서도 똑같이 포함하는지 확인하는 부분을 없앨 수 있다.
-# 일단 벽을 받아서 그 벽마다 추가하고 삭제하는 작업을 하면 되기 때문에 for문으로 벽마다 작업하는데 1,000 이하 이기 때문에 O(N^2) 까지 가능하다고 보았다.
-# 시뮬레이션 문제인 것은 문제에서 주어지기도 했고 순차적으로 조건을 코드로 풀어서 쓰는 유형이었다.
-# 일단 알고리즘이 너무 복잡한데다가 그러다 보니 시간이 길어지고 오류가 발생시에도 코드를 뒤지느라 한나절 걸렸다.
-
+# 풀이시간 25분/50분 시간제한 5초 메모리제한 128MB
 # 3회차 풀이
+# 각 블록을 설치하거나 제거하고 그 목록이 가능한 목록인지만 확인해주면 되는 문제이다. 가능한지는 좌표에 따라 다른 좌표가 존재하거나 하면 되는지 확인해주면 된다. 대표적인 시뮬레이션 유형이다.
+
+def check(frames):
+  for frame in frames:
+    x,y,a=frame
+    if a==0:
+      if y==0 or [x,y-1,0] in frames or [x,y,1] in frames or [x-1,y,1] in frames:
+        continue
+      else:
+        return False
+    else:
+      if [x,y-1,0] in frames or [x+1,y-1,0] in frames or ([x-1,y,1] in frames and [x+1,y,1] in frames):
+        continue
+      else:
+        return False
+  return True
+
+def solution(n, build_frame):
+  answer = []
+
+  for frame in build_frame:
+    x,y,a,b=frame
+    # 삭제
+    if b==0:
+      answer.remove([x,y,a])
+    # 설치
+    else:
+      answer.append([x,y,a])
+
+    # 검사
+    if check(answer):
+      continue
+
+    # 실패 시 다시 설치, 삭제
+    if b==0: # 설치
+      answer.append([x,y,a])
+    else: # 삭제
+      answer.remove([x,y,a])
+    
+  answer.sort()
+  return answer
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+first_case=[[1,0,0,1],[1,1,1,1],[2,1,0,1],[2,2,1,1],[5,0,0,1],[5,1,0,1],[4,2,1,1],[3,2,1,1]]
+print(solution(5,first_case))
+print()
+second_case=[[0,0,0,1],[2,0,0,1],[4,0,0,1],[0,1,1,1],[1,1,1,1],[2,1,1,1],[3,1,1,1],[2,0,0,0],[1,1,1,0],[2,2,0,1]]
+print(solution(5,second_case))
 
 # 2회차 풀이
 # 풀이시간 1시간 30분/50분
@@ -43,65 +59,73 @@
 # 먼저 첫번재 잘못은 시간제한을 확인하지 않은 나의 잘못이다. 시간제한을 먼저 확인했어야했다. 요즘 급하게 풀다보니 오히려 시간제한을 확인하지 않는 습관이 생기면서, 1초로 그냥 생각하고 푸는 경향이 있는데 이런 문제도 존재한다는 것을 인지했으니, 다음부터는 시간제한이 몇 초지 있는지 없는지 부터 확인해보자. 그렇게 된다면 in을 사용하기도 하고 배열도 따로 두지 않게 되어 더 짧게 풀었을 것이다.
 # 두번째 잘못은 한 지점에 시작이 두개 온다는 것을 간과한건데, 간과하게 된 이유는 이차원 배열을 둘 때, 보통 한 자리에 하나의 것이 온다는 인식이 보통이었다고 생각한다. 보통 다른 '뱀'같은 문제에서 하나의 자리에 하나가 오는 것이 보통이기 때문에 이게 습관으로 굳어져서 확인도 안하고 선 접근했던 것 같다. 그렇게 때문에 만약 이차원 배열이 온다면 하나의 자리에 두가지 상태가 존재할 수 있는지 확인해볼 수 있다.
 # 그래도 나름 풀이 속도도 빨라지고 풀이도 점점 간단해지고 있는게 느껴진다.
-def check_right(answer,bo,gi):
-  for block in answer:
-    x,y,a=block
-    if a==0:
-      if y==0 or (bo[x][y] or bo[x-1][y]) or (gi[x][y-1]):
-        gi[x][y]=True
-      else:
-        return False
-    elif a==1:
-      if (gi[x][y-1] or gi[x+1][y-1]) or (bo[x-1][y] and bo[x+1][y]):
-        bo[x][y]=True
-      else:
-        return False
-  return True
+# def check_right(answer,bo,gi):
+#   for block in answer:
+#     x,y,a=block
+#     if a==0:
+#       if y==0 or (bo[x][y] or bo[x-1][y]) or (gi[x][y-1]):
+#         gi[x][y]=True
+#       else:
+#         return False
+#     elif a==1:
+#       if (gi[x][y-1] or gi[x+1][y-1]) or (bo[x-1][y] and bo[x+1][y]):
+#         bo[x][y]=True
+#       else:
+#         return False
+#   return True
     
 
-def solution(n, build_frame):
-  answer = []
-  bo=[[False]*(n+1) for _ in range(n+1)]
-  gi=[[False]*(n+1) for _ in range(n+1)]
+# def solution(n, build_frame):
+#   answer = []
+#   bo=[[False]*(n+1) for _ in range(n+1)]
+#   gi=[[False]*(n+1) for _ in range(n+1)]
 
-  for block in build_frame:
-    x,y,a,b=block
-    if b==1:
-      answer.append([x,y,a])
-      if a==0:
-        gi[x][y]=True
-      else:
-        bo[x][y]=True
-    else:
-      answer.remove([x,y,a])
-      if a==0:
-        gi[x][y]=False
-      else:
-        bo[x][y]=False
+#   for block in build_frame:
+#     x,y,a,b=block
+#     if b==1:
+#       answer.append([x,y,a])
+#       if a==0:
+#         gi[x][y]=True
+#       else:
+#         bo[x][y]=True
+#     else:
+#       answer.remove([x,y,a])
+#       if a==0:
+#         gi[x][y]=False
+#       else:
+#         bo[x][y]=False
 
-    if check_right(answer,bo,gi):
-      continue
-    else:
-      if b==1:
-        answer.remove([x,y,a])
-        if a==0:
-          gi[x][y]=False
-        else:
-          bo[x][y]=False
-      else:
-        answer.append([x,y,a])
-        if a==0:
-          gi[x][y]=True
-        else:
-          bo[x][y]=True
-  answer.sort()
-  return answer
+#     if check_right(answer,bo,gi):
+#       continue
+#     else:
+#       if b==1:
+#         answer.remove([x,y,a])
+#         if a==0:
+#           gi[x][y]=False
+#         else:
+#           bo[x][y]=False
+#       else:
+#         answer.append([x,y,a])
+#         if a==0:
+#           gi[x][y]=True
+#         else:
+#           bo[x][y]=True
+#   answer.sort()
+#   return answer
 
-first_case=[[1,0,0,1],[1,1,1,1],[2,1,0,1],[2,2,1,1],[5,0,0,1],[5,1,0,1],[4,2,1,1],[3,2,1,1]]
-print(solution(5,first_case))
-print()
-second_case=[[0,0,0,1],[2,0,0,1],[4,0,0,1],[0,1,1,1],[1,1,1,1],[2,1,1,1],[3,1,1,1],[2,0,0,0],[1,1,1,0],[2,2,0,1]]
-print(solution(5,second_case))
+# first_case=[[1,0,0,1],[1,1,1,1],[2,1,0,1],[2,2,1,1],[5,0,0,1],[5,1,0,1],[4,2,1,1],[3,2,1,1]]
+# print(solution(5,first_case))
+# print()
+# second_case=[[0,0,0,1],[2,0,0,1],[4,0,0,1],[0,1,1,1],[1,1,1,1],[2,1,1,1],[3,1,1,1],[2,0,0,0],[1,1,1,0],[2,2,0,1]]
+# print(solution(5,second_case))
+
+
+# 풀이 시간 - 1시간 30분/50분 시간제한 5초 메모리제한 128MB
+# 1회차 오답 - 풀이시간 초과, 알고리즘 복잡(정답은 맞음)
+# 내가 짠 코드에서 줄일 수 있는 부분 - 애초에 block을 빼고 넣었으면 각 설치 함수의 제거하는 블록을 있는지 확인하는 부분을 없애고 제거 확인 함수에서도 똑같이 포함하는지 확인하는 부분을 없앨 수 있다.
+# 일단 벽을 받아서 그 벽마다 추가하고 삭제하는 작업을 하면 되기 때문에 for문으로 벽마다 작업하는데 1,000 이하 이기 때문에 O(N^2) 까지 가능하다고 보았다.
+# 시뮬레이션 문제인 것은 문제에서 주어지기도 했고 순차적으로 조건을 코드로 풀어서 쓰는 유형이었다.
+# 일단 알고리즘이 너무 복잡한데다가 그러다 보니 시간이 길어지고 오류가 발생시에도 코드를 뒤지느라 한나절 걸렸다.
 
 # # 1회차 풀이
 # # 먼저 '자물쇠와 열쇠'문제에서 한번 느껴듯이 넣었다가 빼는 아이디어를 떠올리긴 했으나 삭제부분에서 구현 중에 떠올렸다. 또한 삭제와 추가의 경우는 다른식으로 구현아이디어를 떠올리다보니 생각하지 못한 점도 있다. 그래서 추가의 조건을 삭제에 이용하긴 했으나 반대로 통일된 환경을 만들고 이를 추가하고 빼는 방법까지는 떠올리지 못했다. '자물쇠와 열쇠'의 경우에는 해보고 안되면 제거하는 경우였는데 이도 똑같이 해보고 안되면 말고라는 경우를 생각해서 풀었어야 했다. 그래서 통일 조건을 세운다음 만들고 이에 따라 추가와 삭제를 구현했다면 정답지와 유사해졌을 것이다.
