@@ -5,6 +5,29 @@
 from itertools import combinations
 
 n=int(input())
+s=[]
+for _ in range(n):
+    s.append(list(map(int,input().split())))
+
+result=int(1e9)
+for case in list(combinations(range(0,n),n//2)):
+    one_team=list(case)
+    other_team=[i for i in range(0,n) if i not in one_team]
+    sum_team_one=0
+    sum_other_team=0
+    for i in range(0,n//2-1):
+        for j in range(i+1,n//2):
+            sum_team_one+=s[one_team[i]][one_team[j]]+s[one_team[j]][one_team[i]]
+            sum_other_team+=s[other_team[i]][other_team[j]]+s[other_team[j]][other_team[i]]
+
+    result=min(result,abs(sum_team_one-sum_other_team))
+
+print(result)
+
+########
+from itertools import combinations
+
+n=int(input())
 team_num=n//2
 whole=[i for i in range(n)]
 

@@ -32,6 +32,26 @@ print(solution("abcabcabcabcdededededede"))
 print(solution("xababcdcdababcdcd"))
 print(solution("a"))
 
+# 더 간단해진 내 풀이
+def solution(s):
+answer=len(s)
+for unit in range(1,len(s)//2+1):
+    start=s[:unit]
+    count=1
+    now=""
+    for i in range(unit,len(s),unit):
+        if start==s[i:i+unit]:
+            count+=1
+        else:
+            now+=start if count==1 else (str(count)+start)
+            start=s[i:i+unit]
+            count=1
+    now+=start if count==1 else (str(count)+start)
+    answer=min(answer,len(now))
+
+
+return answer
+
 
 
 

@@ -40,3 +40,64 @@ for case in cases:
       
 result=gears[1][0]*1+gears[2][0]*2+gears[3][0]*4+gears[4][0]*8
 print(result)
+
+
+# BFS를 이용해서 풀이
+from collections import deque
+
+gears_state=[deque([0]*8) for _ in range(4+1)]
+for i in range(1,5):
+    state=list(input())
+    for j in range(0,8):
+        gears_state[i][j]=int(state[j])
+
+INF=int(1e9)
+k=int(input())
+
+def turn_gear(num,clock_dir):
+    if clock_dir==-1:
+        gears_state[num].append(gears_state[num].popleft())
+    elif clock_dir==1:
+        gears_state[num].appendleft(gears_state[num].pop())
+
+def start_gear(start,dir):
+    q=deque([start])
+    visited=[INF]*(5)
+    visited[start]=dir
+    while q:
+        now=q.popleft()
+        nl=now-1
+        nr=now+1
+        if nl>=1 and visited[nl]==INF:
+            if gears_state[now][6]!=gears_state[nl][2]:
+                visited[nl]=-visited[now]
+            else:
+                visited[nl]=0
+            q.append(nl)
+        if nr<=4 and visited[nr]==INF:
+            if gears_state[now][2]!=gears_state[nr][6]:
+                visited[nr]=-visited[now]
+            else:
+                visited[nr]=0
+            q.append(nr)
+    for i in range(1,5):
+        turn_gear(i,visited[i])
+
+def get_score(gears):
+    score=0
+    if gears[1][0]==1:
+        score+=1
+    if gears[2][0]==1:
+        score+=2
+    if gears[3][0]==1:
+        score+=4
+    if gears[4][0]==1:
+        score+=8
+    return score
+
+for _ in range(k):
+    num,dir=map(int,input().split())
+    start_gear(num,dir)
+
+score=get_score(gears_state)
+print(score)
