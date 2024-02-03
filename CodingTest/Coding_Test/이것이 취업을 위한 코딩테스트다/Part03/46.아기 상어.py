@@ -1,3 +1,76 @@
+# 풀이시간 33분/50분 시간제한 2초 메모리제한 512MB
+# 2회차 정답
+# 단순히 주어진 풀이대로 푸는 시뮬레이션 유형에 물고기를 찾을 때, 탐색을 쓰는 문제 나같은 경우는 bfs를 사용했다. 전체 맵의 크기가 400칸이고 물고기로 꽉차있어서 전부 탐색해야 한다해도 160,000번 연산 횟수로 가능한 문제이다.
+
+from collections import deque
+
+dx=[0,0,1,-1]
+dy=[1,-1,0,0]
+
+n=int(input())
+
+pos_babyShark=[0,0]
+size_babyShark=2
+board=[]
+for i in range(n):
+    arr=list(map(int,input().split()))
+    for j in range(n):
+        if arr[j]==9:
+            pos_babyShark[0]=i
+            pos_babyShark[1]=j
+    board.append(arr)
+board[pos_babyShark[0]][pos_babyShark[1]]=0
+
+def bfs(start):
+    visited=[[-1]*n for _ in range(n)]
+    q=deque()
+    q.append(start)
+    visited[start[0]][start[1]]=0
+    fishes=[]
+    while q:
+        x,y=q.popleft()
+        for i in range(4):
+            nx=x+dx[i]
+            ny=y+dy[i]
+            if nx<0 or ny<0 or nx>=n or ny>=n or visited[nx][ny]>-1:
+                continue
+            if board[nx][ny]>size_babyShark:
+                continue
+            visited[nx][ny]=visited[x][y]+1
+            q.append((nx,ny))
+            if 0<board[nx][ny]<size_babyShark:
+                fishes.append((visited[nx][ny],nx,ny))
+    return fishes
+
+t=0
+eat_count=0
+while True:
+    # 먹을 물고기가 있는지 탐색
+    fishes=bfs(pos_babyShark)
+
+    # 아기 상어가 더 이상 먹을 것이 없으면 종료
+    if len(fishes)==0:
+        break
+
+    # 먹을 물고기 탐색, 가장 가깝고 위에, 왼쪽
+    fishes.sort(key=lambda x:(x[0],x[1],x[2]))
+    now_eat_fish=fishes[0]
+
+    # 물고기 먹고 그 자리로 이동
+    eat_count+=1
+    pos_babyShark[0]=now_eat_fish[1]
+    pos_babyShark[1]=now_eat_fish[2]
+    board[now_eat_fish[1]][now_eat_fish[2]]=0
+
+    if eat_count==size_babyShark:
+        size_babyShark+=1
+        eat_count=0
+
+    # 1초 지남
+    t+=now_eat_fish[0]
+
+print(t)
+
 # 풀이시간 1시간 20분/50분 시간제한 2초 메모리제한 512MB
 # 1회차 정답 - 풀이시간이 오래 걸림
 # 단순하게 보드에서 상어 위치를 지워주지 않아 경로 거리를 재는데 오류가 생겨 오래 걸렸다. 이거 찾는데만 30분 넘게 썼다.
