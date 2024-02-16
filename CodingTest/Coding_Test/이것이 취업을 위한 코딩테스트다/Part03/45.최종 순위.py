@@ -1,3 +1,57 @@
+from collections import deque
+
+def topology_sort():
+    q=deque()
+    result=[]
+
+    for i in range(1,n+1):
+        if indegree[i]==0:
+            q.append(i)
+            result.append(i)
+
+    for i in range(1,n+1):
+        if len(q)==0:
+            print('IMPOSSIBLE')
+            return
+        if len(q)>1:
+            print('?')
+            return
+
+        now=q.popleft()
+        for j in graph[now]:
+            indegree[j]-=1
+            if indegree[j]==0:
+                q.append(j)
+                result.append(j)
+    print(*result)
+
+
+for tc in range(int(input())):
+    n=int(input())
+    last_year_rank=list(map(int,input().split()))
+    indegree=[0]*(n+1)
+    graph=[[] for _ in range(n+1)]
+    for i in range(0,n-1):
+        for j in range(i+1,n):
+            indegree[last_year_rank[j]]+=1
+            graph[last_year_rank[i]].append(last_year_rank[j])
+
+    m=int(input())
+    for _ in range(m):
+        a,b=map(int,input().split())
+        if b in graph[a]:
+            graph[a].remove(b)
+            graph[b].append(a)
+            indegree[b]-=1
+            indegree[a]+=1
+        else:
+            graph[b].remove(a)
+            graph[a].append(b)
+            indegree[a]-=1
+            indegree[b]+=1
+
+    topology_sort()
+
 # 2회차 풀이
 # 전에 풀었던 풀이대로 생각도 나고 일관성이 없는 잘못된 정보일 경우에 노드 횟수만큼 돌렸을 때, 큐를 비우는 작업이 끝나버려 사이클이 발생한다는 점도 알고 있었다. 하지만 확실한 순위를 만들 수 없는 경우의 뜻을 이해를 하지 못했다. 확실한 순위를 만들 수 없다는 것이 즉, 순위를 만들 수는 있으나 여러가지 케이스가 나올 수 있다는 경우라는 것을 말이다.
 # 이것은 한번 더 풀어보면서 정확히 케이스를 외우고 넘어가는 것이 좋다고 생각해서 다시 풀기로 하였다.
