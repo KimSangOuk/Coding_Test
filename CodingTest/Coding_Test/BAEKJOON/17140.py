@@ -1,3 +1,70 @@
+# 풀이시간 40분/1시간 시간제한 0.5초 메모리제한 512MB
+# 2회차 정답
+# 이하 생략
+r,c,k=map(int,input().split())
+
+A=[[0]*100 for _ in range(100)]
+
+for i in range(3):
+    array=list(map(int,input().split()))
+    for j in range(3):
+        A[i][j]=array[j]
+
+
+def rc_sort(array,k):
+    global max_c,max_r
+    new_array=[0]*100
+    max_value=max(array)
+    count=[0]*(max_value+1)
+    for i in range(100):
+        count[array[i]]+=1
+    tmp=[]
+    for i in range(1,max_value+1):
+        if count[i]>0:
+             tmp.append((i,count[i]))
+    tmp.sort(key=lambda x:(x[1],x[0]))
+    index=0
+    length=len(tmp)*2
+    for a,b in tmp:
+        new_array[index]=a
+        new_array[index+1]=b
+        index+=2
+
+    if k=='r':
+        max_c=max(length,max_c)
+    else:
+        max_r=max(length,max_r)
+
+    return new_array
+
+max_r=3
+max_c=3
+
+time=0
+while time<=100:
+    if A[r-1][c-1]==k:
+        print(time)
+        break
+
+    if max_r>=max_c:
+        max_c=0
+        for i in range(100):
+            A[i]=rc_sort(A[i],'r')
+    else:
+        max_r=0
+        for j in range(100):
+            tmp=[]
+            for i in range(100):
+                tmp.append(A[i][j])
+            tmp=rc_sort(tmp,'c')
+            for i in range(100):
+                A[i][j]=tmp[i]
+
+    time+=1
+
+if time>100:
+    print(-1)
+
 # 풀이시간 2시간/60분 시간제한 0.5초 메모리제한 512MB
 # 1회차 정답 - but, 풀이시간 오래 걸림
 # 주어진 조건대로 2차원 배열을 다루는 시뮬레이션 문제이다. 최대한 시간을 줄여보고자 처음에는 인덱스를 제한하면서 배열 또한 최소한의 크기로 풀려고 하다가 너무 인덱스가 복잡해지기도 하고 조건이 까다로워져서 100*100으로 만들어놓고 풀었다.
