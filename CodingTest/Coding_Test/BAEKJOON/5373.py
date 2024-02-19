@@ -1,3 +1,97 @@
+# 풀이시간 50분 시간제한 1초 메모리제한 128MB
+# 2회차 정답
+# 이하 생략
+
+def clock_turn(array):
+  new_array=[['.']*3 for _ in range(3)]
+  for i in range(3):
+      for j in range(3):
+          new_array[j][2-i]=array[i][j]
+  return new_array
+
+def side_turn(side):
+  if side=='U':
+      tmp1,tmp2,tmp3=back[0][0],back[0][1],back[0][2]
+      back[0][0],back[0][1],back[0][2]=left[0][0],left[0][1],left[0][2]
+      left[0][0],left[0][1],left[0][2]=front[0][0],front[0][1],front[0][2]
+      front[0][0],front[0][1],front[0][2]=right[0][0],right[0][1],right[0][2]
+      right[0][0],right[0][1],right[0][2]=tmp1,tmp2,tmp3
+  if side=='D':
+      tmp1,tmp2,tmp3=front[2][0],front[2][1],front[2][2]
+      front[2][0],front[2][1],front[2][2]=left[2][0],left[2][1],left[2][2]
+      left[2][0],left[2][1],left[2][2]=back[2][0],back[2][1],back[2][2]
+      back[2][0],back[2][1],back[2][2]=right[2][0],right[2][1],right[2][2]
+      right[2][0],right[2][1],right[2][2]=tmp1,tmp2,tmp3
+  if side=='F':
+      tmp1,tmp2,tmp3=up[2][0],up[2][1],up[2][2]
+      up[2][0],up[2][1],up[2][2]=left[2][2],left[1][2],left[0][2]
+      left[2][2],left[1][2],left[0][2]=down[0][2],down[0][1],down[0][0]
+      down[0][2],down[0][1],down[0][0]=right[0][0],right[1][0],right[2][0]
+      right[0][0],right[1][0],right[2][0]=tmp1,tmp2,tmp3
+  if side=='B':
+      tmp1,tmp2,tmp3=up[0][2],up[0][1],up[0][0]
+      up[0][2],up[0][1],up[0][0]=right[2][2],right[1][2],right[0][2]
+      right[2][2],right[1][2],right[0][2]=down[2][0],down[2][1],down[2][2]
+      down[2][0],down[2][1],down[2][2]=left[0][0],left[1][0],left[2][0]
+      left[0][0],left[1][0],left[2][0]=tmp1,tmp2,tmp3
+  if side=='R':
+      tmp1,tmp2,tmp3=up[2][2],up[1][2],up[0][2]
+      up[2][2],up[1][2],up[0][2]=front[2][2],front[1][2],front[0][2]
+      front[2][2],front[1][2],front[0][2]=down[2][2],down[1][2],down[0][2]
+      down[2][2],down[1][2],down[0][2]=back[0][0],back[1][0],back[2][0]
+      back[0][0],back[1][0],back[2][0]=tmp1,tmp2,tmp3
+  if side=='L':
+      tmp1,tmp2,tmp3=up[0][0],up[1][0],up[2][0]
+      up[0][0],up[1][0],up[2][0]=back[2][2],back[1][2],back[0][2]
+      back[2][2],back[1][2],back[0][2]=down[0][0],down[1][0],down[2][0]
+      down[0][0],down[1][0],down[2][0]=front[0][0],front[1][0],front[2][0]
+      front[0][0],front[1][0],front[2][0]=tmp1,tmp2,tmp3
+
+
+
+def by_dir_clock_turn(array,side,dir):
+  if dir=='+':
+      array=clock_turn(array)
+      side_turn(side)
+  else:
+      for i in range(3):
+          array=clock_turn(array)
+          side_turn(side)
+  return array
+
+def turn(side,dir):
+  global up,down,right,left,front,back
+  if side=='U':
+      up=by_dir_clock_turn(up,side,dir)
+  if side=='D':
+      down=by_dir_clock_turn(down,side,dir)
+  if side=='F':
+      front=by_dir_clock_turn(front,side,dir)
+  if side=='B':
+      back=by_dir_clock_turn(back,side,dir)
+  if side=='R':
+      right=by_dir_clock_turn(right,side,dir)
+  if side=='L':
+      left=by_dir_clock_turn(left,side,dir)
+
+for tc in range(int(input())):
+  front=[['r']*3 for _ in range(3)]
+  back=[['o']*3 for _ in range(3)]
+  left=[['g']*3 for _ in range(3)]
+  right=[['b']*3 for _ in range(3)]
+  down=[['y']*3 for _ in range(3)]
+  up=[['w']*3 for _ in range(3)]
+
+  n=int(input())
+  orders=list(map(str,input().split()))
+  for order in orders:
+      turn(order[0],order[1])
+
+  for i in range(3):
+      for j in range(3):
+          print(up[i][j],end='')
+      print()
+
 # 풀이시간 3시간/1시간 시간제한 1초 메모리제한 128MB
 # 1회차 오답 - 풀이시간 초과 / 풀이방법에 접근하지 못함
 # 각 면이 돌아갈 때, 한 면을 방향에 따라 돌리고 나머지 사이드에 붙어있는 4면의 큐빅을 회전시키는 문제이다. 시뮬레이션 문제인데, 이게 상당히 시간이 오래걸렸다. 처음에는 어떻게든 규칙이 있지 않을까 싶어서 코드 길이를 줄이고자 각 큐빅을 받아서 회전시키는 식으로 했다가 회전하는 면에 따라 큐빅이 돌아갈 때, 들어가는 방향이 일정하지 않아서 오래걸리기도 하고 다시 풀이 방법을 보고 다시 풀었다.
