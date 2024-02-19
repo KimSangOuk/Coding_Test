@@ -1,3 +1,60 @@
+# 풀이시간 1시간 시간제한 2초 메모리제한 512MB
+# 2회차 정답
+# 사다리를 타는 과정에서 시간초과가 발생하는거 같아서 그래프 탐색에서 단순 좌표 이동으로 해주었더니 맞은 문제.
+
+from collections import deque
+
+n,m,h=map(int,input().split())
+
+board=[[0]*(n+1) for _ in range(h+2)]
+
+for _ in range(m):
+    a,b=map(int,input().split())
+    board[a][b]=1
+
+result=4
+
+def check_i_to_i():
+    for i in range(1,n+1):
+        now_n=i
+        for j in range(0,h+2):
+            if board[j][now_n-1]==1:
+                now_n-=1
+            elif board[j][now_n]==1:
+                now_n+=1
+        if now_n!=i:
+            return False
+
+    return True
+
+def dfs(count):
+    global result
+    if count==3:
+        if check_i_to_i():
+            result=min(result,count)
+            return
+    else:
+        if check_i_to_i():
+            if result>count:
+                result=count
+                return
+        if count+1>=result:
+            return
+        for i in range(1,h+1):
+            for j in range(1,n):
+                if board[i][j]==0 and board[i][j-1]==0 and board[i][j+1]==0:
+                    board[i][j]=1
+                    count+=1
+                    dfs(count)
+                    count-=1
+                    board[i][j]=0
+
+dfs(0)
+if result>3:
+    print(-1)
+else:
+    print(result)
+
 # 풀이시간 2시간/1시간 시간제한 2초 메모리제한 512MB
 # 1회차 정답 - But, 풀이시간 너무 오래 걸림
 # 처음에는 조합을 통해 완전탐색으로 풀면되겠거니 해서 빈공간을 찾은 후 사다리를 설치하는 경우를 답으로 제시했다. 이럴 경우에 약 1000만회의 조합의 경우의 수가 나오는데 여기다가 각 조합에서 사다리타기만 진행해도 6번이 곱해져서 6000만회로 시간초과가 나왔다. 그래서 시간을 줄이기 위해서는 추가되는 사다리를 늘려가면서 들어가는 DFS를 사용하면 겹치는 경우의 수가 줄어들 것이라고 생각했고 시간초과를 해결하기 위해 DFS를 사용해서 벽을 놓는 것만 변경했다. 하지만 진행도는 올라가도 올라가서 시간초과로 다시 막히길래 방법을 찾다가 현재의 답으로 구해놓은 count보다 진행하려는 count가 많을 때는 진행할 필요가 없다는 것을 알았다. 그래서 적용시켰더니 시간초과를 통과하였다.
