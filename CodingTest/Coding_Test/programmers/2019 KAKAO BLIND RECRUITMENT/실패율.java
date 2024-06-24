@@ -24,6 +24,8 @@ class Solution {
             answer[i]=list.get(i).getKey();
         }
 
+        // return map.entrySet().stream().sorted((o1,o2)->Float.compare(o2.getValue(),o1.getValue())).mapToInt(HashMap,Entry::getKey).toArray()
+
         return answer;
     }
 }
