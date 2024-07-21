@@ -74,3 +74,27 @@ for bag in bags: # 각 가방 무게에 대해
     if tmp: #bag 무게 이하 보석 가격 다 저장했으면
         result -= heapq.heappop(tmp) # 제일 가치가 높은 가격 더하기(음수니까 빼기)
 print(result)
+
+#######
+
+import heapq
+
+n,k=map(int,input().split())
+
+jewels=[]
+for _ in range(n):
+    heapq.heappush(jewels,list(map(int,input().split())))
+
+bags=[]
+for _ in range(k):
+    heapq.heappush(bags,int(input()))
+
+tmp=[]
+answer=0
+while bags:
+    bag=heapq.heappop(bags)
+    while jewels and bag>=jewels[0][0]:
+        heapq.heappush(tmp,-heapq.heappop(jewels)[1])
+    if tmp:
+        answer+=-heapq.heappop(tmp)
+print(answer)
