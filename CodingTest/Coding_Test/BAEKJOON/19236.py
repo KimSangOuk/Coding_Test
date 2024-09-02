@@ -166,3 +166,70 @@ def dfs(array,now_x,now_y,total):
     dfs(array,next_x,next_y,total)
 
 # 청소년 상어의 시작 위치(0,0)에서부터 재귀적으로 모든 경우 탐색
+
+
+
+
+
+import copy
+fishes=dict()
+board=[[0]*4 for _ in range(4)]
+for i in range(4):
+    arr=list(map(int,input().split()))
+    for j in range(0,2*4,2):
+        a,b=arr[j],arr[j+1]
+        board[i][j//2]=a
+        fishes[a]=[i,j//2,b-1]
+
+dx=[-1,-1,0,1,1,1,0,-1]
+dy=[0,-1,-1,-1,0,1,1,1]
+
+shark=[0,0,0]
+score=board[0][0]
+shark[2]=fishes[board[0][0]][2]
+del fishes[board[0][0]]
+board[0][0]=-1
+answer=0
+
+def moveFish(fishes,board,shark):
+    for fishNum in sorted(fishes.keys()):
+        x,y,d=fishes[fishNum]
+        for i in range(8):
+            nx=x+dx[(d+i)%8]
+            ny=y+dy[(d+i)%8]
+            if nx<0 or ny<0 or nx>=4 or ny>=4:
+                continue
+            if shark[0]==nx and shark[1]==ny:
+                continue
+            if board[nx][ny]!=-1:
+                fishes[board[nx][ny]][0]=x
+                fishes[board[nx][ny]][1]=y
+            fishes[fishNum]=[nx,ny,(d+i)%8]
+            board[nx][ny],board[x][y]=board[x][y],board[nx][ny]
+            break
+
+
+def dfs(score,shark,newBoard,newFishes):
+    global answer
+    moveFish(newFishes,newBoard,shark)
+    t=1
+    while True:
+        nx=shark[0]+dx[shark[2]]*t
+        ny=shark[1]+dy[shark[2]]*t
+        if nx<0 or ny<0 or nx>=4 or ny>=4:
+            answer=max(answer,score)
+            return
+        if newBoard[nx][ny]==-1:
+            t+=1
+            continue
+        board=copy.deepcopy(newBoard)
+        fishes=copy.deepcopy(newFishes)
+        tmpNum=board[nx][ny]
+        tmpFish=fishes[tmpNum]
+        board[nx][ny]=-1
+        del fishes[tmpNum]
+        dfs(score+tmpNum,[nx,ny,tmpFish[2]],board,fishes)
+        t+=1
+
+dfs(score,shark,board,fishes)
+print(answer)
