@@ -76,3 +76,65 @@ def bfs(rx, ry, bx, by):
         count += 1
     print(-1) # 10회가 초과하지 않았지만 10회 내에도 구멍에 들어가지 못하는 경우
 bfs(rx, ry, bx, by)
+
+### 내 풀이
+
+from collections import deque
+
+n,m=map(int,input().split())
+
+dx=[0,0,-1,1]
+dy=[-1,1,0,0]
+
+bluePos=[]
+redPos=[]
+board=[]
+visited=set()
+for i in range(n):
+    arr=list(input())
+    for j in range(m):
+        if arr[j]=='B':
+            bluePos=[i,j]
+        if arr[j]=='R':
+            redPos=[i,j]
+    board.append(arr)
+
+q=deque()
+q.append((redPos[0],redPos[1],bluePos[0],bluePos[1],0))
+visited.add((redPos[0],redPos[1],bluePos[0],bluePos[1]))
+answer=-1
+while q:
+    rx,ry,bx,by,cnt=q.popleft()
+    if cnt>=10:
+        break
+    for i in range(4):
+        nrx,nry,nbx,nby=rx,ry,bx,by
+        distR=0
+        distB=0
+        while board[nrx+dx[i]][nry+dy[i]]!='#' and board[nrx][nry]!='O':
+            nrx=nrx+dx[i]
+            nry=nry+dy[i]
+            distR+=1
+        while board[nbx+dx[i]][nby+dy[i]]!='#' and board[nbx][nby]!='O':
+            nbx=nbx+dx[i]
+            nby=nby+dy[i]
+            distB+=1
+        if board[nbx][nby]=='O':
+            continue
+        if (nrx,nry,nbx,nby) in visited:
+            continue
+        if board[nrx][nry]=='O':
+            answer=cnt+1
+            break
+        if nrx==nbx and nry==nby:
+            if distR>distB:
+                nrx-=dx[i]
+                nry-=dy[i]
+            else:
+                nbx-=dx[i]
+                nby-=dy[i]
+        visited.add((nrx,nry,nbx,nby))
+        q.append((nrx,nry,nbx,nby,cnt+1))
+    if answer!=-1:
+        break
+print(answer)
